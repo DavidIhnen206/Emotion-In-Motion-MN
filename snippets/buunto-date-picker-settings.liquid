@@ -1,0 +1,89 @@
+{% comment %}
+
+DO NOT MODIFY THIS TEMPLATE. This file is managed automatically by Buunto Date Picker. Any modification will be erased eventually.
+
+{% endcomment %}
+
+<script type="text/javascript">
+
+window.Buunto = window.Buunto || {};
+
+window.Buunto.datePicker = window.Buunto.datePicker || {};
+
+{%- if product -%}
+
+    window.Buunto.datePicker.productCollections = {{ product.collections | map: "id" | json }};
+
+    window.Buunto.datePicker.productTags = {{ product.tags | json }};
+
+    window.Buunto.datePicker.productOptions = {{ product.options | json }};
+
+    window.Buunto.datePicker.productVariants = {{ product.variants | json }};
+
+{%- endif -%}
+
+{%- if cart -%}
+
+    {% assign cart_product_tags = '' | split: '' %}
+    {% assign cart_product_collections = '' | split: '' %}
+    {% for item in cart.items %}
+
+        {% for tag in item.product.tags %}
+            {% assign cart_product_tags = tag | concat: cart_product_tags %}
+        {% endfor %}
+
+        {% assign collection_ids = item.product.collections | map: 'id' %}
+        {% for id in collection_ids %}
+            {% assign cart_product_collections = id | concat: cart_product_collections %}
+        {% endfor %}
+
+    {% endfor %}
+
+    window.Buunto.datePicker.cartTags = {{ cart_product_tags | uniq | json }};
+
+    window.Buunto.datePicker.cartCollections = {{ cart_product_collections | uniq | json }};
+
+    window.Buunto.datePicker.cartItemCount = {{ cart.items.size }};
+
+    {% assign selected_method = "" %}
+    {% assign selected_date = "" %}
+    {% assign selected_time_slot = "" %}
+
+    {% assign method_tag_label = "Method" %}
+    {% assign delivery_date_tag_label = "Delivery Date" %}
+    {% assign pickup_date_tag_label = "Pickup Date" %}
+    {% assign delivery_time_slot_tag_label = "Delivery Time" %}
+    {% assign pickup_time_slot_tag_label = "Pickup Time" %}
+
+    {% for item in cart.items %}
+
+        {%- if item.properties[method_tag_label] and selected_method == "" -%}
+            {% assign selected_method = item.properties[method_tag_label] %}
+        {%- endif %}
+
+        {%- if item.properties[delivery_date_tag_label] and selected_date == "" -%}
+            {% assign selected_date = item.properties[delivery_date_tag_label] %}
+        {%- endif %}
+
+        {%- if item.properties[pickup_date_tag_label] and selected_date == "" -%}
+            {% assign selected_date = item.properties[pickup_date_tag_label] %}
+        {%- endif %}
+
+        {%- if item.properties[delivery_time_slot_tag_label] and selected_time_slot == "" -%}
+            {% assign selected_time_slot = item.properties[delivery_time_slot_tag_label] %}
+        {%- endif %}
+
+        {%- if item.properties[pickup_time_slot_tag_label] and selected_time_slot == "" -%}
+            {% assign selected_time_slot = item.properties[pickup_time_slot_tag_label] %}
+        {%- endif %}
+
+    {% endfor %}
+
+    window.Buunto.datePicker.selectedMethod = {{ selected_method | json }};
+    window.Buunto.datePicker.selectedDate = {{ selected_date | json }};
+    window.Buunto.datePicker.selectedTimeSlot = {{ selected_time_slot | json }};
+    window.Buunto.datePicker.cart = {{ cart | json }};
+
+{%- endif -%}
+
+</script>
